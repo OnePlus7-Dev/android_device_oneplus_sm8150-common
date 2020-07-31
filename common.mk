@@ -8,6 +8,8 @@ $(call inherit-product, $(SRC_TARGET_DIR)/product/updatable_apex.mk)
 
 # Get non-open-source specific aspects
 $(call inherit-product-if-exists, vendor/oneplus/sm8150-common/sm8150-common-vendor.mk)
+# $(call inherit-product-if-exists, vendor/oneplus/camera/Android.mk)
+# $(call inherit-product-if-exists, vendor/oneplus/camera/config.mk)
 
 # Additional native libraries
 PRODUCT_COPY_FILES += \
@@ -86,7 +88,7 @@ PRODUCT_COPY_FILES += \
     frameworks/native/data/etc/android.software.midi.xml:$(TARGET_COPY_OUT_VENDOR)/etc/permissions/android.software.midi.xml \
     frameworks/native/data/etc/android.software.sip.voip.xml:$(TARGET_COPY_OUT_VENDOR)/etc/permissions/android.software.sip.voip.xml \
     frameworks/native/data/etc/handheld_core_hardware.xml:$(TARGET_COPY_OUT_VENDOR)/etc/permissions/handheld_core_hardware.xml \
-    vendor/lineage/config/permissions/vendor.lineage.biometrics.fingerprint.inscreen.xml:$(TARGET_COPY_OUT_SYSTEM)/etc/permissions/vendor.lineage.biometrics.fingerprint.inscreen.xml
+    vendor/ancient/config/permissions/vendor.lineage.biometrics.fingerprint.inscreen.xml:$(TARGET_COPY_OUT_SYSTEM)/etc/permissions/vendor.lineage.biometrics.fingerprint.inscreen.xml
 
 # ANT+
 PRODUCT_PACKAGES += \
