@@ -155,12 +155,6 @@
             android:summary="@string/fps_info_summary"
             android:persistent="true" />
 
-    <SwitchPreference
-        android:key="otg_switch"
-        android:icon="@drawable/ic_otg_icon"
-        android:summary="@string/otg_switch_summary"
-        android:title="@string/otg_switch_title" />
-
     </PreferenceCategory>
 
 </PreferenceScreen>
