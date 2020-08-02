@@ -31,6 +31,8 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ListView;
+import android.view.Window;
+import android.view.WindowManager;
 import android.util.Log;
 import androidx.preference.PreferenceFragment;
 import androidx.preference.PreferenceManager;
@@ -55,7 +57,6 @@ public class DeviceSettings extends PreferenceFragment
     public static final String KEY_DC_SWITCH = "dc";
     public static final String KEY_DCI_SWITCH = "dci";
     public static final String KEY_WIDE_SWITCH = "wide";
-    public static final String KEY_OTG_SWITCH = "otg_switch";
 
     public static final String KEY_FPS_INFO = "fps_info";
 
@@ -73,11 +74,19 @@ public class DeviceSettings extends PreferenceFragment
     private ListPreference mMiddleKeyPref;
     private ListPreference mBottomKeyPref;
     private static SwitchPreference mFpsInfo;
-    private static TwoStatePreference mOtgSwitch;
 
     @Override
     public void onCreatePreferences(Bundle savedInstanceState, String rootKey) {
         addPreferencesFromResource(R.xml.main);
+
+        Resources res = getResources();
+        Window win = getActivity().getWindow();
+
+        win.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
+        win.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_NAVIGATION);
+        win.setNavigationBarColor(res.getColor(R.color.primary_color));
+        win.setNavigationBarDividerColor(res.getColor(R.color.primary_color));
+
         getActivity().getActionBar().setDisplayHomeAsUpEnabled(true);
 
         final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this.getContext());
@@ -119,11 +128,6 @@ public class DeviceSettings extends PreferenceFragment
         mFpsInfo = (SwitchPreference) findPreference(KEY_FPS_INFO);
         mFpsInfo.setChecked(prefs.getBoolean(KEY_FPS_INFO, false));
         mFpsInfo.setOnPreferenceChangeListener(this);
-
-        mOtgSwitch = (TwoStatePreference) findPreference(KEY_OTG_SWITCH);
-        mOtgSwitch.setEnabled(UsbOtgSwitch.isSupported());
-        mOtgSwitch.setChecked(UsbOtgSwitch.isCurrentlyEnabled(this.getContext()));
-        mOtgSwitch.setOnPreferenceChangeListener(new UsbOtgSwitch());
     }
 
     @Override

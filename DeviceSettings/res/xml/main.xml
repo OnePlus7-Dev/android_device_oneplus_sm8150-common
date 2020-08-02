@@ -26,6 +26,17 @@
                     android:targetClass="org.lineageos.device.DeviceSettings.PanelSettingsActivity" />
         </Preference>
 
+        <Preference
+            android:key="doze"
+            android:icon="@drawable/ic_doze"
+            android:persistent="false"
+            android:title="@string/custom_doze_settings_title"
+            android:summary="@string/custom_doze_settings_summary">
+            <intent
+                    android:action="android.intent.action.MAIN"
+                    android:targetPackage="org.lineageos.settings.doze" />
+        </Preference>
+
         <SwitchPreference
             android:key="dc"
             android:icon="@drawable/ic_dc_mode_icon"
@@ -49,6 +60,18 @@
             android:title="@string/auto_hbm_threshold_title"
             android:summary="@string/auto_hbm_threshold_summary" />
 
+    </PreferenceCategory>
+
+    <PreferenceCategory
+        android:key="fps"
+        android:title="@string/fps_title">
+
+        <SwitchPreference
+            android:key="fps_info"
+            android:icon="@drawable/ic_fps_overlay_icon"
+            android:title="@string/fps_info_title"
+            android:summary="@string/fps_info_summary"
+            android:persistent="true" />
     </PreferenceCategory>
 
     <PreferenceCategory
