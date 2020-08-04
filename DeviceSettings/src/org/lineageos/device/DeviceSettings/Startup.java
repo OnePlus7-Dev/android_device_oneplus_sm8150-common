@@ -15,7 +15,7 @@
 * along with this program. If not, see <http://www.gnu.org/licenses/>.
 *
 */
-package org.aosp.device.DeviceSettings;
+package org.lineageos.device.DeviceSettings;
 
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -47,10 +47,22 @@ public class Startup extends BroadcastReceiver {
     public void onReceive(final Context context, final Intent bootintent) {
         boolean enabled = false;
         SharedPreferences sharedPrefs = PreferenceManager.getDefaultSharedPreferences(context);
+        enabled = sharedPrefs.getBoolean(DeviceSettings.KEY_SRGB_SWITCH, false);
+        restore(SRGBModeSwitch.getFile(), enabled);
         enabled = sharedPrefs.getBoolean(DeviceSettings.KEY_HBM_SWITCH, false);
         restore(HBMModeSwitch.getFile(), enabled);
         enabled = sharedPrefs.getBoolean(DeviceSettings.KEY_DC_SWITCH, false);
         restore(DCModeSwitch.getFile(), enabled);
+        enabled = sharedPrefs.getBoolean(DeviceSettings.KEY_DCI_SWITCH, false);
+        restore(DCIModeSwitch.getFile(), enabled);
+        enabled = sharedPrefs.getBoolean(DeviceSettings.KEY_NIGHT_SWITCH, false);
+        restore(NightModeSwitch.getFile(), enabled);
+        enabled = sharedPrefs.getBoolean(DeviceSettings.KEY_WIDECOLOR_SWITCH, false);
+        restore(WideColorModeSwitch.getFile(), enabled);
+        enabled = sharedPrefs.getBoolean(DeviceSettings.KEY_FPS_INFO, false);
+        if (enabled) {
+            context.startService(new Intent(context, FPSInfoService.class));
+        }
         Utils.enableService(context);
     }
 }

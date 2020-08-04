@@ -1,7 +1,7 @@
 // let's make nice and clear,
 // proper seekbar preference.
 
-package org.aosp.device.DeviceSettings;
+package org.lineageos.device.DeviceSettings;
 
 import android.content.Context;
 import android.content.res.TypedArray;

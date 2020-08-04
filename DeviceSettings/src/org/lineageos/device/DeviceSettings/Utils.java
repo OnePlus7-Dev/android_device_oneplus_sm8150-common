@@ -15,10 +15,14 @@
 * along with this program. If not, see <http://www.gnu.org/licenses/>.
 *
 */
-package org.aosp.device.DeviceSettings;
+package org.lineageos.device.DeviceSettings;
+
+import android.content.res.Resources;
+import android.util.Log;
 
 import android.content.Context;
 import android.content.Intent;
+import android.os.RemoteException;
 import android.content.pm.ActivityInfo;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
@@ -34,24 +38,25 @@ import java.io.FileReader;
 
 public class Utils {
 
+    private static final String TAG = Utils.class.getSimpleName();
     private static boolean mServiceEnabled = false;
 
     private static void startService(Context context) {
-        context.startServiceAsUser(new Intent(context, AutoHBMService.class),
+        context.startServiceAsUser(new Intent(context, AutoHighBrightnessModeService.class),
                 UserHandle.CURRENT);
         mServiceEnabled = true;
     }
 
     private static void stopService(Context context) {
         mServiceEnabled = false;
-        context.stopServiceAsUser(new Intent(context, AutoHBMService.class),
+        context.stopServiceAsUser(new Intent(context, AutoHighBrightnessModeService.class),
                 UserHandle.CURRENT);
     }
 
     public static void enableService(Context context) {
-        if (DeviceSettings.isAUTOHBMEnabled(context) && !mServiceEnabled) {
+        if (DeviceSettings.isHBMAutobrightnessEnabled(context) && !mServiceEnabled) {
             startService(context);
-        } else if (!DeviceSettings.isAUTOHBMEnabled(context) && mServiceEnabled) {
+        } else if (!DeviceSettings.isHBMAutobrightnessEnabled(context) && mServiceEnabled) {
             stopService(context);
         }
     }
@@ -131,27 +136,24 @@ public class Utils {
         }
         return defValue;
     }
-
-    public static boolean isAppInstalled(Context context, String appUri) {
-        try {
-            PackageManager pm = context.getPackageManager();
-            pm.getPackageInfo(appUri, PackageManager.GET_ACTIVITIES);
-            return true;
-        } catch (Exception e) {
-            return false;
-        }
+    
+            public static String getLocalizedString(final Resources res,
+                                            final String stringName,
+                                            final String stringFormat) {
+        final String name = stringName.toLowerCase().replace(" ", "_");
+        final String nameRes = String.format(stringFormat, name);
+        return getStringForResourceName(res, nameRes, stringName);
     }
 
-    public static boolean isAvailableApp(String packageName, Context context) {
-        Context mContext = context;
-        final PackageManager pm = mContext.getPackageManager();
-        try {
-            pm.getPackageInfo(packageName, PackageManager.GET_ACTIVITIES);
-            int enabled = pm.getApplicationEnabledSetting(packageName);
-            return enabled != PackageManager.COMPONENT_ENABLED_STATE_DISABLED &&
-                enabled != PackageManager.COMPONENT_ENABLED_STATE_DISABLED_USER;
-        } catch (NameNotFoundException e) {
-            return false;
+    public static String getStringForResourceName(final Resources res,
+                                                  final String resourceName,
+                                                  final String defaultValue) {
+        final int resId = res.getIdentifier(resourceName, "string", "org.lineageos.device.DeviceSettings");
+        if (resId <= 0) {
+            Log.e(TAG, "No resource found for " + resourceName);
+            return defaultValue;
+        } else {
+            return res.getString(resId);
         }
     }
 }
