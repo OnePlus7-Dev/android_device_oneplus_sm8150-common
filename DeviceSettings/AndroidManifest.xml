@@ -14,7 +14,7 @@
 -->
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
           android:sharedUserId="android.uid.system"
-          package="org.linageos.device.DeviceSettings"
+          package="org.aosp.device.DeviceSettings"
           android:versionCode="1"
           android:versionName="1.0" >
 
@@ -53,18 +53,7 @@
         <activity android:name=".DeviceSettings" />
         <activity android:name=".KeyHandler" />
 
-        <activity
-            android:name="org.linageos.device.DeviceSettings.PanelSettingsActivity"
-            android:exported="true"
-            android:label="@string/panel_category_title"
-            android:launchMode="singleTask" >
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-                <category android:name="android.intent.category.DEFAULT" />
-            </intent-filter>
-        </activity>
-
-        <receiver android:name="org.linageos.device.DeviceSettings.Startup" >
+        <receiver android:name="org.aosp.device.DeviceSettings.Startup" >
             <intent-filter android:priority="100" >
                 <action android:name="android.intent.action.BOOT_COMPLETED" />
             </intent-filter>
@@ -72,7 +61,7 @@
 
         <!-- Quick Settings Tiles -->
         <service
-            android:name="org.linageos.device.DeviceSettings.DCModeTileService"
+            android:name="org.aosp.device.DeviceSettings.DCModeTileService"
             android:icon="@drawable/ic_dc_tile"
             android:label="@string/tile_dc_mode"
             android:permission="android.permission.BIND_QUICK_SETTINGS_TILE">
@@ -82,17 +71,7 @@
             </intent-filter>
         </service>
         <service
-            android:name="org.linageos.device.DeviceSettings.PanelModeTileService"
-            android:icon="@drawable/ic_panel_tile"
-            android:label="@string/tile_panel_mode"
-            android:permission="android.permission.BIND_QUICK_SETTINGS_TILE">
-            <intent-filter>
-                <action
-                    android:name="android.service.quicksettings.action.QS_TILE"/>
-            </intent-filter>
-        </service>
-        <service
-            android:name="org.linageos.device.DeviceSettings.HBMModeTileService"
+            android:name="org.aosp.device.DeviceSettings.HBMModeTileService"
             android:icon="@drawable/ic_hbm_tile"
             android:label="@string/tile_hbm_mode"
             android:permission="android.permission.BIND_QUICK_SETTINGS_TILE">
@@ -103,28 +82,12 @@
         </service>
 
         <!-- Auto HBM service -->
-        <service android:name="org.linageos.device.DeviceSettings.AutoHBMService" />
-
-        <!-- Refresh rate tile -->
-        <service
-            android:name="org.linageos.device.DeviceSettings.RefreshRateTileService"
-            android:icon="@drawable/ic_refresh_tile_60"
-            android:label="@string/tile_refresh_rate"
-            android:permission="android.permission.BIND_QUICK_SETTINGS_TILE">
-            <intent-filter>
-                <action
-                    android:name="android.service.quicksettings.action.QS_TILE"/>
-            </intent-filter>
-        </service>
-
-        <service android:name="org.linageos.device.DeviceSettings.FPSInfoService"
-                android:exported="false">
-        </service>
+        <service android:name="org.aosp.device.DeviceSettings.AutoHBMService" />
 
         <!-- Search indexing -->
         <provider
             android:name=".ConfigPanelSearchIndexablesProvider"
-            android:authorities="org.linageos.device"
+            android:authorities="org.aosp.device"
             android:multiprocess="false"
             android:grantUriPermissions="true"
             android:permission="android.permission.READ_SEARCH_INDEXABLES"

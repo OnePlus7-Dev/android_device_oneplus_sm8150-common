@@ -15,7 +15,7 @@
 * along with this program. If not, see <http://www.gnu.org/licenses/>.
 *
 */
-package org.lineageos.device.DeviceSettings;
+package org.aosp.device.DeviceSettings;
 
 import android.app.AlertDialog;
 import android.app.Dialog;
@@ -51,46 +51,34 @@ import org.aosp.device.DeviceSettings.Constants;
 public class DeviceSettings extends PreferenceFragment
         implements Preference.OnPreferenceChangeListener {
 
-    public static final String KEY_VIBSTRENGTH = "vib_strength";
-    public static final String KEY_SRGB_SWITCH = "srgb";
-    public static final String KEY_HBM_SWITCH = "hbm";
-    public static final String KEY_HBM_AUTOBRIGHTNESS_SWITCH = "hbm_autobrightness";
-    public static final String KEY_HBM_AUTOBRIGHTNESS_THRESHOLD = "hbm_autobrightness_threshould";
-    public static final String KEY_DC_SWITCH = "dc";
-    public static final String KEY_DCI_SWITCH = "dci";
-    public static final String KEY_NIGHT_SWITCH = "night";
-    public static final String KEY_WIDECOLOR_SWITCH = "widecolor";
 
-    private static final String KEY_CATEGORY_REFRESH = "refresh";
+    private static final String KEY_CATEGORY_GRAPHICS = "graphics";
+    public static final String KEY_HBM_SWITCH = "hbm";
+    public static final String KEY_AUTO_HBM_SWITCH = "auto_hbm";
+    public static final String KEY_AUTO_HBM_THRESHOLD = "auto_hbm_threshold";
+    public static final String KEY_DC_SWITCH = "dc";
     public static final String KEY_REFRESH_RATE = "refresh_rate";
     public static final String KEY_AUTO_REFRESH_RATE = "auto_refresh_rate";
     public static final String KEY_FPS_INFO = "fps_info";
-
+    private static final String KEY_ENABLE_DOLBY_ATMOS = "enable_dolby_atmos";
     public static final String KEY_VIBSTRENGTH = "vib_strength";
 
 
     public static final String KEY_SETTINGS_PREFIX = "device_setting_";
 
     private static TwoStatePreference mHBMModeSwitch;
-    private static TwoStatePreference mHBMAutobrightnessSwitch;
+    private static TwoStatePreference mAutoHBMSwitch;
     private static TwoStatePreference mDCModeSwitch;
-    private static TwoStatePreference mRefreshRate;
-    private static SwitchPreference mAutoRefreshRate;
-    private static SwitchPreference mFpsInfo;
+    private static TwoStatePreference mEnableDolbyAtmos;
     private ListPreference mTopKeyPref;
     private ListPreference mMiddleKeyPref;
     private ListPreference mBottomKeyPref;
-    private VibratorStrengthPreference mVibratorStrength;
 
     @Override
     public void onCreatePreferences(Bundle savedInstanceState, String rootKey) {
+        final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this.getContext());
         addPreferencesFromResource(R.xml.main);
         getActivity().getActionBar().setDisplayHomeAsUpEnabled(true);
-
-        mVibratorStrength = (VibratorStrengthPreference) findPreference(KEY_VIBSTRENGTH);
-        if (mVibratorStrength == null || !VibratorStrengthPreference.isSupported()) {
-            getPreferenceScreen().removePreference((Preference) findPreference("vibrator"));
-        }
 
         mTopKeyPref = (ListPreference) findPreference(Constants.NOTIF_SLIDER_TOP_KEY);
         mTopKeyPref.setValueIndex(Constants.getPreferenceInt(getContext(), Constants.NOTIF_SLIDER_TOP_KEY));
@@ -102,73 +90,63 @@ public class DeviceSettings extends PreferenceFragment
         mBottomKeyPref.setValueIndex(Constants.getPreferenceInt(getContext(), Constants.NOTIF_SLIDER_BOTTOM_KEY));
         mBottomKeyPref.setOnPreferenceChangeListener(this);
 
-        mHBMModeSwitch = (TwoStatePreference) findPreference(KEY_HBM_SWITCH);
-        mHBMModeSwitch.setEnabled(HBMModeSwitch.isSupported());
-        mHBMModeSwitch.setChecked(HBMModeSwitch.isCurrentlyEnabled(this.getContext()));
-        mHBMModeSwitch.setOnPreferenceChangeListener(new HBMModeSwitch());
-
-        mHBMAutobrightnessSwitch = (TwoStatePreference) findPreference(KEY_HBM_AUTOBRIGHTNESS_SWITCH);
-        mHBMAutobrightnessSwitch.setChecked(PreferenceManager.getDefaultSharedPreferences(getContext()).getBoolean(DeviceSettings.KEY_HBM_AUTOBRIGHTNESS_SWITCH, false));
-        mHBMAutobrightnessSwitch.setOnPreferenceChangeListener(this);
-
         mDCModeSwitch = (TwoStatePreference) findPreference(KEY_DC_SWITCH);
         mDCModeSwitch.setEnabled(DCModeSwitch.isSupported());
         mDCModeSwitch.setChecked(DCModeSwitch.isCurrentlyEnabled(this.getContext()));
         mDCModeSwitch.setOnPreferenceChangeListener(new DCModeSwitch());
 
-        mSingleTapSwitch = (TwoStatePreference) findPreference(KEY_GESTURE_SINGLE_TAP_SWITCH);
-        mSingleTapSwitch.setEnabled(SingleTapSwitch.isSupported());
-        mSingleTapSwitch.setChecked(SingleTapSwitch.isCurrentlyEnabled(this.getContext()));
-        mSingleTapSwitch.setOnPreferenceChangeListener(new SingleTapSwitch());
-   
-        if (getResources().getBoolean(R.bool.config_deviceHasHighRefreshRate)) {
-            mAutoRefreshRate = (SwitchPreference) findPreference(KEY_AUTO_REFRESH_RATE);
-            mAutoRefreshRate.setChecked(AutoRefreshRateSwitch.isCurrentlyEnabled(this.getContext()));
-            mAutoRefreshRate.setOnPreferenceChangeListener(new AutoRefreshRateSwitch(getContext()));
+        mHBMModeSwitch = (TwoStatePreference) findPreference(KEY_HBM_SWITCH);
+        mHBMModeSwitch.setEnabled(HBMModeSwitch.isSupported());
+        mHBMModeSwitch.setChecked(HBMModeSwitch.isCurrentlyEnabled(this.getContext()));
+        mHBMModeSwitch.setOnPreferenceChangeListener(new HBMModeSwitch());
 
-            mRefreshRate = (TwoStatePreference) findPreference(KEY_REFRESH_RATE);
-            mRefreshRate.setEnabled(!AutoRefreshRateSwitch.isCurrentlyEnabled(this.getContext()));
-            mRefreshRate.setChecked(RefreshRateSwitch.isCurrentlyEnabled(this.getContext()));
-            mRefreshRate.setOnPreferenceChangeListener(new RefreshRateSwitch(getContext()));
-
-            mFpsInfo = (SwitchPreference) findPreference(KEY_FPS_INFO);
-            mFpsInfo.setChecked(prefs.getBoolean(KEY_FPS_INFO, false));
-            mFpsInfo.setOnPreferenceChangeListener(this);
-        } else {
-            getPreferenceScreen().removePreference((Preference) findPreference(KEY_CATEGORY_REFRESH));
-        }
-
+        mAutoHBMSwitch = (TwoStatePreference) findPreference(KEY_AUTO_HBM_SWITCH);
+        mAutoHBMSwitch.setChecked(PreferenceManager.getDefaultSharedPreferences(getContext()).getBoolean(DeviceSettings.KEY_AUTO_HBM_SWITCH, false));
+        mAutoHBMSwitch.setOnPreferenceChangeListener(this);
+        mEnableDolbyAtmos = (TwoStatePreference) findPreference(KEY_ENABLE_DOLBY_ATMOS);
+        mEnableDolbyAtmos.setOnPreferenceChangeListener(this);
     }
 
     @Override
     public boolean onPreferenceTreeClick(Preference preference) {
-        if (preference == mAutoRefreshRate) {
-              mRefreshRate.setEnabled(!AutoRefreshRateSwitch.isCurrentlyEnabled(this.getContext()));
-        }
-        return super.onPreferenceTreeClick(preference); }
+        return super.onPreferenceTreeClick(preference);
+    }
 
     @Override
     public boolean onPreferenceChange(Preference preference, Object newValue) {
-        if (preference == mFpsInfo) {
-            boolean enabled = (Boolean) newValue;
-            Intent fpsinfo = new Intent(this.getContext(), org.lineageos.device.DeviceSettings.FPSInfoService.class);
-            if (enabled) {
-                this.getContext().startService(fpsinfo);
-            } else {
-                this.getContext().stopService(fpsinfo);
-            }
-        } else if (preference == mAutoHBMSwitch) {
+       if (preference == mAutoHBMSwitch) {
             Boolean enabled = (Boolean) newValue;
             SharedPreferences.Editor prefChange = PreferenceManager.getDefaultSharedPreferences(getContext()).edit();
-            prefChange.putBoolean(KEY_HBM_AUTOBRIGHTNESS_SWITCH, enabled).commit();
+            prefChange.putBoolean(KEY_AUTO_HBM_SWITCH, enabled).commit();
             Utils.enableService(getContext());
-            return true;
         }
-        return false;
+        else if (preference == mEnableDolbyAtmos) {
+            boolean enabled = (Boolean) newValue;
+            Intent daxService = new Intent();
+            ComponentName name = new ComponentName("com.dolby.daxservice", "com.dolby.daxservice.DaxService");
+            daxService.setComponent(name);
+            if (enabled) {
+                // enable service component and start service
+                this.getContext().getPackageManager().setComponentEnabledSetting(name,
+                        PackageManager.COMPONENT_ENABLED_STATE_DEFAULT, 0);
+                this.getContext().startService(daxService);
+            } else {
+                // disable service component and stop service
+                this.getContext().stopService(daxService);
+                this.getContext().getPackageManager().setComponentEnabledSetting(name,
+                        PackageManager.COMPONENT_ENABLED_STATE_DISABLED, 0);
+            }
+            return true; 
+        }
+        else {
+            Constants.setPreferenceInt(getContext(), preference.getKey(), Integer.parseInt((String) newValue));
+            return true;
+        } 
+        return true;
     }
 
-    public static boolean isHBMAutobrightnessEnabled(Context context) {
-        return PreferenceManager.getDefaultSharedPreferences(context).getBoolean(DeviceSettings.KEY_HBM_AUTOBRIGHTNESS_SWITCH, false);
+    public static boolean isAUTOHBMEnabled(Context context) {
+        return PreferenceManager.getDefaultSharedPreferences(context).getBoolean(DeviceSettings.KEY_AUTO_HBM_SWITCH, false);
     }
 
     @Override
