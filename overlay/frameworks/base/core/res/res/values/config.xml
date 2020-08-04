@@ -490,9 +490,6 @@
     
     <!-- Whether device has dash charging support -->
     <bool name="config_hasDashCharger">true</bool>
-    
-    <!-- Whether the device supports Smart Pixels -->
-    <bool name="config_enableSmartPixels">true</bool>
 	
     <!-- Wired/BT headset focus mode -->
     <bool name="config_deviceRingtoneFocusMode">true</bool>
