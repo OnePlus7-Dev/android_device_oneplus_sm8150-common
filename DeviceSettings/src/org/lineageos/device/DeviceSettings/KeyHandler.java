@@ -84,7 +84,7 @@ public class KeyHandler implements DeviceKeyHandler {
     }
 
     public static final String CLIENT_PACKAGE_NAME = "com.oneplus.camera";
-    public static final String CLIENT_PACKAGE_PATH = "/data/misc/lineage/client_package_name";
+    public static final String CLIENT_PACKAGE_PATH = "/data/misc/xtended/client_package_name";
 
     // Single tap key code
     private static final int SINGLE_TAP = 67;
@@ -232,18 +232,8 @@ public class KeyHandler implements DeviceKeyHandler {
 
         mAudioManager.setRingerModeInternal(sSupportedSliderRingModes.get(keyCodeValue));
         mNotificationManager.setZenMode(sSupportedSliderZenModes.get(keyCodeValue), null, TAG);
-        int position = scanCode == 601 ? 2 : scanCode == 602 ? 1 : 0;
-        sendUpdateBroadcast(position);
         doHapticFeedback();
         return null;
-    }
-
-    private void sendUpdateBroadcast(int position) {
-        Intent intent = new Intent(Constants.ACTION_UPDATE_SLIDER_POSITION);
-        intent.putExtra(Constants.EXTRA_SLIDER_POSITION, position);
-        mContext.sendBroadcastAsUser(intent, UserHandle.CURRENT);
-        intent.setFlags(Intent.FLAG_RECEIVER_REGISTERED_ONLY);
-        Log.d(TAG, "slider change to positon " + position);
     }
 
     private void doHapticFeedback() {
