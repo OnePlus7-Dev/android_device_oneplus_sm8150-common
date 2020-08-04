@@ -77,6 +77,7 @@ public class Startup extends BroadcastReceiver {
        }
         Utils.enableService(context);
     }
+    }
 
     private void restore(String file, boolean enabled) {
         if (file == null) {
