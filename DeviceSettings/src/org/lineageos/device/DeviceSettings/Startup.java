@@ -90,13 +90,6 @@ public class Startup extends BroadcastReceiver {
             Utils.writeValue(file, mHBM ? "5" : "1");
         }
     }
-
-    private void restore(String file, String value) {
-        if (file == null) {
-            return;
-        }
-        Utils.writeValue(file, value);
-    }
         private boolean hasRestoredTunable(Context context) {
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
         return preferences.getBoolean(ONE_TIME_TUNABLE_RESTORE, false);
