@@ -67,9 +67,6 @@ public class DeviceSettings extends PreferenceFragment
     public static final String KEY_AUTO_REFRESH_RATE = "auto_refresh_rate";
     public static final String KEY_FPS_INFO = "fps_info";
 
-    public static final String KEY_VIBSTRENGTH = "vib_strength";
-
-
     public static final String KEY_SETTINGS_PREFIX = "device_setting_";
 
     private static TwoStatePreference mHBMModeSwitch;
@@ -160,25 +157,6 @@ public class DeviceSettings extends PreferenceFragment
                 this.getContext().stopService(fpsinfo);
             }
         } else if (preference == mAutoHBMSwitch) {
-            Boolean enabled = (Boolean) newValue;
-            SharedPreferences.Editor prefChange = PreferenceManager.getDefaultSharedPreferences(getContext()).edit();
-            prefChange.putBoolean(KEY_HBM_AUTOBRIGHTNESS_SWITCH, enabled).commit();
-            Utils.enableService(getContext());
-            return true;
-        }
-        return false;
-    }
-     public boolean onPreferenceChange(Preference preference, Object newValue) {
-        if (preference == mTopKeyPref) {
-            Constants.setPreferenceInt(getContext(), preference.getKey(), Integer.parseInt((String) newValue));
-            return true;
-        } else if (preference == mMiddleKeyPref) {
-            Constants.setPreferenceInt(getContext(), preference.getKey(), Integer.parseInt((String) newValue));
-            return true;
-        } else if (preference == mBottomKeyPref) {
-            Constants.setPreferenceInt(getContext(), preference.getKey(), Integer.parseInt((String) newValue));
-            return true;
-        } else if (preference == mHBMAutobrightnessSwitch) {
             Boolean enabled = (Boolean) newValue;
             SharedPreferences.Editor prefChange = PreferenceManager.getDefaultSharedPreferences(getContext()).edit();
             prefChange.putBoolean(KEY_HBM_AUTOBRIGHTNESS_SWITCH, enabled).commit();
