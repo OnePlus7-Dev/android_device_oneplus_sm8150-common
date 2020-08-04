@@ -19,7 +19,7 @@
             android:key="touchscreen_gesture_category"
             android:title="@string/touchscreen_gesture_settings_title"
             android:summary="@string/touchscreen_gesture_settings_summary"
-            android:icon="@drawable/rr_gestures_icon"
+            android:icon="@drawable/ic_gestures_icon"
             android:persistent="false" >
             <intent android:action="android.intent.action.MAIN"
                     android:targetPackage="org.lineageos.device.DeviceSettings"
@@ -153,7 +153,7 @@
 
         <SwitchPreference
             android:key="gesture_single_tap"
-            android:icon="@drawable/rr_ambient_icon"
+            android:icon="@drawable/ic_ambient_icon"
             android:defaultValue="false"
             android:summary="@string/single_tap_gesture_summary"
             android:title="@string/single_tap_gesture_title" />
@@ -164,7 +164,7 @@
         android:title="@string/category_vibrator">
         <org.lineageos.device.DeviceSettings.VibratorStrengthPreference
             android:key="vib_strength"
-            android:icon="@drawable/rr_intensity_icon"
+            android:icon="@drawable/ic_intensity_icon"
             android:title="@string/vib_strength_title_head"
             android:summary="@string/vib_strength_summary_head" />
     </PreferenceCategory>
