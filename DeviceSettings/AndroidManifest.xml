@@ -13,9 +13,8 @@
      limitations under the License.
 -->
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-          xmlns:tools="http://schemas.android.com/tools"
           android:sharedUserId="android.uid.system"
-          package="org.lineageos.device.DeviceSettings"
+          package="org.linageos.device.DeviceSettings"
           android:versionCode="1"
           android:versionName="1.0" >
 
@@ -23,11 +22,11 @@
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
     <uses-permission android:name="android.permission.VIBRATE" />
     <uses-permission android:name="android.permission.WRITE_SETTINGS" />
-
-    <protected-broadcast android:name="org.lineageos.device.DeviceSettings.UPDATE_SETTINGS" />
+    <uses-permission android:name="android.permission.CAMERA" />
 
     <uses-sdk
-        android:minSdkVersion="24" />
+        android:minSdkVersion="28"
+        android:targetSdkVersion="29" />
 
     <application
         android:icon="@drawable/ic_settings_device"
@@ -55,7 +54,7 @@
         <activity android:name=".KeyHandler" />
 
         <activity
-            android:name="org.lineageos.device.DeviceSettings.PanelSettingsActivity"
+            android:name="org.linageos.device.DeviceSettings.PanelSettingsActivity"
             android:exported="true"
             android:label="@string/panel_category_title"
             android:launchMode="singleTask" >
@@ -65,13 +64,7 @@
             </intent-filter>
         </activity>
 
-        <activity
-            android:name=".TouchscreenGestureSettings"
-            android:label="@string/touchscreen_gesture_settings_title"
-            android:theme="@style/AppTheme">
-        </activity>
-
-        <receiver android:name="org.lineageos.device.DeviceSettings.Startup" >
+        <receiver android:name="org.linageos.device.DeviceSettings.Startup" >
             <intent-filter android:priority="100" >
                 <action android:name="android.intent.action.BOOT_COMPLETED" />
             </intent-filter>
@@ -79,30 +72,7 @@
 
         <!-- Quick Settings Tiles -->
         <service
-            android:name="org.lineageos.device.DeviceSettings.PanelModeTileService"
-            android:icon="@drawable/ic_panel_tile"
-            android:label="@string/tile_panel_mode"
-            android:permission="android.permission.BIND_QUICK_SETTINGS_TILE">
-            <intent-filter>
-                <action
-                    android:name="android.service.quicksettings.action.QS_TILE"/>
-            </intent-filter>
-        </service>
-
-        <service
-            android:name="org.lineageos.device.DeviceSettings.HBMModeTileService"
-            android:icon="@drawable/ic_hbm_tile"
-            android:label="@string/tile_hbm_mode"
-            android:permission="android.permission.BIND_QUICK_SETTINGS_TILE">
-            <intent-filter>
-                <action
-                    android:name="android.service.quicksettings.action.QS_TILE"/>
-            </intent-filter>
-
-        </service>
-
-        <service
-            android:name="org.lineageos.device.DeviceSettings.DCModeTileService"
+            android:name="org.linageos.device.DeviceSettings.DCModeTileService"
             android:icon="@drawable/ic_dc_tile"
             android:label="@string/tile_dc_mode"
             android:permission="android.permission.BIND_QUICK_SETTINGS_TILE">
@@ -111,13 +81,50 @@
                     android:name="android.service.quicksettings.action.QS_TILE"/>
             </intent-filter>
         </service>
+        <service
+            android:name="org.linageos.device.DeviceSettings.PanelModeTileService"
+            android:icon="@drawable/ic_panel_tile"
+            android:label="@string/tile_panel_mode"
+            android:permission="android.permission.BIND_QUICK_SETTINGS_TILE">
+            <intent-filter>
+                <action
+                    android:name="android.service.quicksettings.action.QS_TILE"/>
+            </intent-filter>
+        </service>
+        <service
+            android:name="org.linageos.device.DeviceSettings.HBMModeTileService"
+            android:icon="@drawable/ic_hbm_tile"
+            android:label="@string/tile_hbm_mode"
+            android:permission="android.permission.BIND_QUICK_SETTINGS_TILE">
+            <intent-filter>
+                <action
+                    android:name="android.service.quicksettings.action.QS_TILE"/>
+            </intent-filter>
+        </service>
 
-        <service android:name="org.lineageos.device.DeviceSettings.AutoHighBrightnessModeService" />
+        <!-- Auto HBM service -->
+        <service android:name="org.linageos.device.DeviceSettings.AutoHBMService" />
 
-        <!-- Search Provider -->
+        <!-- Refresh rate tile -->
+        <service
+            android:name="org.linageos.device.DeviceSettings.RefreshRateTileService"
+            android:icon="@drawable/ic_refresh_tile_60"
+            android:label="@string/tile_refresh_rate"
+            android:permission="android.permission.BIND_QUICK_SETTINGS_TILE">
+            <intent-filter>
+                <action
+                    android:name="android.service.quicksettings.action.QS_TILE"/>
+            </intent-filter>
+        </service>
+
+        <service android:name="org.linageos.device.DeviceSettings.FPSInfoService"
+                android:exported="false">
+        </service>
+
+        <!-- Search indexing -->
         <provider
             android:name=".ConfigPanelSearchIndexablesProvider"
-            android:authorities="org.lineageos.device"
+            android:authorities="org.linageos.device"
             android:multiprocess="false"
             android:grantUriPermissions="true"
             android:permission="android.permission.READ_SEARCH_INDEXABLES"
