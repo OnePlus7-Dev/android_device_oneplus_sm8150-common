@@ -27,29 +27,41 @@ import androidx.preference.PreferenceManager;
 
 public class Startup extends BroadcastReceiver {
 
+    private boolean mHBM = false;
+
     @Override
     public void onReceive(final Context context, final Intent bootintent) {
 
         VibratorStrengthPreference.restore(context);
-        VibratorCallStrengthPreference.restore(context);
-        VibratorNotifStrengthPreference.restore(context);
 
         boolean enabled = false;
         SharedPreferences sharedPrefs = PreferenceManager.getDefaultSharedPreferences(context);
         enabled = sharedPrefs.getBoolean(DeviceSettings.KEY_SRGB_SWITCH, false);
-        restore(SRGBModeSwitch.getFile(), enabled);
-        enabled = sharedPrefs.getBoolean(DeviceSettings.KEY_HBM_SWITCH, false);
-        restore(HBMModeSwitch.getFile(), enabled);
-        enabled = sharedPrefs.getBoolean(DeviceSettings.KEY_DC_SWITCH, false);
-        restore(DCModeSwitch.getFile(), enabled);
-        enabled = sharedPrefs.getBoolean(DeviceSettings.KEY_DCI_SWITCH, false);
-        restore(DCIModeSwitch.getFile(), enabled);
-        enabled = sharedPrefs.getBoolean(DeviceSettings.KEY_WIDE_SWITCH, false);
-        restore(WideModeSwitch.getFile(), enabled);
-        enabled = sharedPrefs.getBoolean(DeviceSettings.KEY_FPS_INFO, false);
+
         if (enabled) {
-            context.startService(new Intent(context, FPSInfoService.class));
-       }
+        mHBM = false;
+        restore(SRGBModeSwitch.getFile(), enabled);
+		}
+        enabled = sharedPrefs.getBoolean(DeviceSettings.KEY_HBM_SWITCH, false);
+        if (enabled) {
+        mHBM = true;
+        restore(HBMModeSwitch.getFile(), enabled);
+        }
+        enabled = sharedPrefs.getBoolean(DeviceSettings.KEY_DC_SWITCH, false);
+        if (enabled) {
+        mHBM = false;
+        restore(DCModeSwitch.getFile(), enabled);
+        }
+        enabled = sharedPrefs.getBoolean(DeviceSettings.KEY_DCI_SWITCH, false);
+        if (enabled) {
+        mHBM = false;
+        restore(DCIModeSwitch.getFile(), enabled);
+        }
+        enabled = sharedPrefs.getBoolean(DeviceSettings.KEY_NIGHT_SWITCH, false);
+        if (enabled) {
+        mHBM = false;
+        restore(NightModeSwitch.getFile(), enabled);
+        }
 
         Utils.enableService(context);
     }
@@ -59,7 +71,7 @@ public class Startup extends BroadcastReceiver {
             return;
         }
         if (enabled) {
-            Utils.writeValue(file, "1");
+            Utils.writeValue(file, mHBM ? "5" : "1");
         }
     }
 

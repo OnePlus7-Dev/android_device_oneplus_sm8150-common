@@ -31,11 +31,8 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ListView;
-import android.view.Window;
-import android.view.WindowManager;
 import android.util.Log;
 import androidx.preference.PreferenceFragment;
-import androidx.preference.PreferenceManager;
 import androidx.preference.SwitchPreference;
 import androidx.preference.ListPreference;
 import androidx.preference.Preference;
@@ -45,61 +42,37 @@ import androidx.preference.PreferenceManager;
 import androidx.preference.PreferenceScreen;
 import androidx.preference.TwoStatePreference;
 
-import org.lineageos.device.DeviceSettings.FileUtils;
-
 public class DeviceSettings extends PreferenceFragment
         implements Preference.OnPreferenceChangeListener {
 
+    public static final String KEY_VIBSTRENGTH = "vib_strength";
     public static final String KEY_SRGB_SWITCH = "srgb";
     public static final String KEY_HBM_SWITCH = "hbm";
-    public static final String KEY_AUTO_HBM_SWITCH = "auto_hbm";
-    public static final String KEY_AUTO_HBM_THRESHOLD = "auto_hbm_threshold";
+    public static final String KEY_HBM_AUTOBRIGHTNESS_SWITCH = "hbm_autobrightness";
+    public static final String KEY_HBM_AUTOBRIGHTNESS_THRESHOLD = "hbm_autobrightness_threshould";
     public static final String KEY_DC_SWITCH = "dc";
     public static final String KEY_DCI_SWITCH = "dci";
-    public static final String KEY_WIDE_SWITCH = "wide";
+    public static final String KEY_NIGHT_SWITCH = "night";
 
-    public static final String KEY_FPS_INFO = "fps_info";
-
-    public static final String KEY_VIBSTRENGTH = "vib_strength";
-    private VibratorStrengthPreference mVibratorStrength;
-    public static final String KEY_CALL_VIBSTRENGTH = "vib_call_strength";
-    private VibratorCallStrengthPreference mVibratorCallStrength;
-    public static final String KEY_NOTIF_VIBSTRENGTH = "vib_notif_strength";
-    private VibratorNotifStrengthPreference mVibratorNotifStrength;
+    public static final String KEY_SETTINGS_PREFIX = "device_setting_";
 
     private static TwoStatePreference mHBMModeSwitch;
-    private static TwoStatePreference mAutoHBMSwitch;
+    private static TwoStatePreference mHBMAutobrightnessSwitch;
     private static TwoStatePreference mDCModeSwitch;
     private ListPreference mTopKeyPref;
     private ListPreference mMiddleKeyPref;
     private ListPreference mBottomKeyPref;
-    private static SwitchPreference mFpsInfo;
+    private VibratorStrengthPreference mVibratorStrength;
 
     @Override
     public void onCreatePreferences(Bundle savedInstanceState, String rootKey) {
         addPreferencesFromResource(R.xml.main);
-
-        Resources res = getResources();
-        Window win = getActivity().getWindow();
-
-        win.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
-        win.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_NAVIGATION);
-        win.setNavigationBarColor(res.getColor(R.color.primary_color));
-        win.setNavigationBarDividerColor(res.getColor(R.color.primary_color));
-
         getActivity().getActionBar().setDisplayHomeAsUpEnabled(true);
 
-        final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this.getContext());
-
         mVibratorStrength = (VibratorStrengthPreference) findPreference(KEY_VIBSTRENGTH);
-        if (mVibratorStrength != null)
-            mVibratorStrength.setEnabled(VibratorStrengthPreference.isSupported());
-        mVibratorCallStrength = (VibratorCallStrengthPreference) findPreference(KEY_CALL_VIBSTRENGTH);
-        if (mVibratorCallStrength != null)
-            mVibratorCallStrength.setEnabled(VibratorCallStrengthPreference.isSupported());
-        mVibratorNotifStrength = (VibratorNotifStrengthPreference) findPreference(KEY_NOTIF_VIBSTRENGTH);
-        if (mVibratorNotifStrength != null)
-            mVibratorNotifStrength.setEnabled(VibratorNotifStrengthPreference.isSupported());
+        if (mVibratorStrength == null || !VibratorStrengthPreference.isSupported()) {
+            getPreferenceScreen().removePreference((Preference) findPreference("vibrator"));
+        }
 
         mTopKeyPref = (ListPreference) findPreference(Constants.NOTIF_SLIDER_TOP_KEY);
         mTopKeyPref.setValueIndex(Constants.getPreferenceInt(getContext(), Constants.NOTIF_SLIDER_TOP_KEY));
@@ -116,44 +89,39 @@ public class DeviceSettings extends PreferenceFragment
         mHBMModeSwitch.setChecked(HBMModeSwitch.isCurrentlyEnabled(this.getContext()));
         mHBMModeSwitch.setOnPreferenceChangeListener(new HBMModeSwitch());
 
-        mAutoHBMSwitch = (TwoStatePreference) findPreference(KEY_AUTO_HBM_SWITCH);
-        mAutoHBMSwitch.setChecked(PreferenceManager.getDefaultSharedPreferences(getContext()).getBoolean(DeviceSettings.KEY_AUTO_HBM_SWITCH, false));
-        mAutoHBMSwitch.setOnPreferenceChangeListener(this);
+        mHBMAutobrightnessSwitch = (TwoStatePreference) findPreference(KEY_HBM_AUTOBRIGHTNESS_SWITCH);
+        mHBMAutobrightnessSwitch.setChecked(PreferenceManager.getDefaultSharedPreferences(getContext()).getBoolean(DeviceSettings.KEY_HBM_AUTOBRIGHTNESS_SWITCH, false));
+        mHBMAutobrightnessSwitch.setOnPreferenceChangeListener(this);
 
         mDCModeSwitch = (TwoStatePreference) findPreference(KEY_DC_SWITCH);
         mDCModeSwitch.setEnabled(DCModeSwitch.isSupported());
         mDCModeSwitch.setChecked(DCModeSwitch.isCurrentlyEnabled(this.getContext()));
         mDCModeSwitch.setOnPreferenceChangeListener(new DCModeSwitch());
-
-        mFpsInfo = (SwitchPreference) findPreference(KEY_FPS_INFO);
-        mFpsInfo.setChecked(prefs.getBoolean(KEY_FPS_INFO, false));
-        mFpsInfo.setOnPreferenceChangeListener(this);
     }
 
     @Override
     public boolean onPreferenceChange(Preference preference, Object newValue) {
-        if (preference == mFpsInfo) {
-            boolean enabled = (Boolean) newValue;
-            Intent fpsinfo = new Intent(this.getContext(), org.lineageos.device.DeviceSettings.FPSInfoService.class);
-            if (enabled) {
-                this.getContext().startService(fpsinfo);
-            } else {
-                this.getContext().stopService(fpsinfo);
-            }
-        } else if (preference == mAutoHBMSwitch) {
+        if (preference == mTopKeyPref) {
+            Constants.setPreferenceInt(getContext(), preference.getKey(), Integer.parseInt((String) newValue));
+            return true;
+        } else if (preference == mMiddleKeyPref) {
+            Constants.setPreferenceInt(getContext(), preference.getKey(), Integer.parseInt((String) newValue));
+            return true;
+        } else if (preference == mBottomKeyPref) {
+            Constants.setPreferenceInt(getContext(), preference.getKey(), Integer.parseInt((String) newValue));
+            return true;
+        } else if (preference == mHBMAutobrightnessSwitch) {
             Boolean enabled = (Boolean) newValue;
             SharedPreferences.Editor prefChange = PreferenceManager.getDefaultSharedPreferences(getContext()).edit();
-            prefChange.putBoolean(KEY_AUTO_HBM_SWITCH, enabled).commit();
+            prefChange.putBoolean(KEY_HBM_AUTOBRIGHTNESS_SWITCH, enabled).commit();
             Utils.enableService(getContext());
-        } else {
-            Constants.setPreferenceInt(getContext(), preference.getKey(), Integer.parseInt((String) newValue));
+            return true;
         }
-
-        return true;
+        return false;
     }
 
-    public static boolean isAUTOHBMEnabled(Context context) {
-        return PreferenceManager.getDefaultSharedPreferences(context).getBoolean(DeviceSettings.KEY_AUTO_HBM_SWITCH, false);
+    public static boolean isHBMAutobrightnessEnabled(Context context) {
+        return PreferenceManager.getDefaultSharedPreferences(context).getBoolean(DeviceSettings.KEY_HBM_AUTOBRIGHTNESS_SWITCH, false);
     }
 
     @Override

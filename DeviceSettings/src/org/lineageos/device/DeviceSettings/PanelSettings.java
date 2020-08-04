@@ -23,20 +23,6 @@ import android.content.res.Resources;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.provider.Settings;
-import android.text.TextUtils;
-import android.view.LayoutInflater;
-import android.view.MenuItem;
-import android.view.View;
-import android.view.ViewGroup;
-import android.view.Window;
-import android.view.WindowManager;
-import android.widget.AdapterView;
-import android.widget.AdapterView.OnItemClickListener;
-import android.widget.ListView;
-import android.widget.RadioButton;
-import android.widget.RadioGroup;
-import android.util.Log;
 import androidx.preference.PreferenceFragment;
 import androidx.preference.ListPreference;
 import androidx.preference.Preference;
@@ -44,6 +30,18 @@ import androidx.preference.PreferenceCategory;
 import androidx.preference.PreferenceManager;
 import androidx.preference.PreferenceScreen;
 import androidx.preference.TwoStatePreference;
+import android.provider.Settings;
+import android.text.TextUtils;
+import android.view.LayoutInflater;
+import android.view.MenuItem;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemClickListener;
+import android.widget.ListView;
+import android.widget.RadioButton;
+import android.widget.RadioGroup;
+import android.util.Log;
 
 public class PanelSettings extends PreferenceFragment implements RadioGroup.OnCheckedChangeListener {
     private RadioGroup mRadioGroup;
@@ -53,9 +51,7 @@ public class PanelSettings extends PreferenceFragment implements RadioGroup.OnCh
         super.onViewCreated(view, savedInstanceState);
         mRadioGroup = (RadioGroup) view.findViewById(R.id.radio_group);
         int checkedButtonId = R.id.off_mode;
-        if (WideModeSwitch.isCurrentlyEnabled(getContext())) {
-            checkedButtonId = R.id.wide_mode;
-        } else if (DCIModeSwitch.isCurrentlyEnabled(getContext())) {
+        if (DCIModeSwitch.isCurrentlyEnabled(getContext())) {
             checkedButtonId = R.id.dci_mode;
         } else if (SRGBModeSwitch.isCurrentlyEnabled(getContext())) {
             checkedButtonId = R.id.srgb_mode;
@@ -66,20 +62,12 @@ public class PanelSettings extends PreferenceFragment implements RadioGroup.OnCh
 
     @Override
     public void onCreatePreferences(Bundle savedInstanceState, String rootKey) {
-
-        Resources res = getResources();
-        Window win = getActivity().getWindow();
-
-        win.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
-        win.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_NAVIGATION);
-        win.setNavigationBarColor(res.getColor(R.color.primary_color));
-        win.setNavigationBarDividerColor(res.getColor(R.color.primary_color));
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
             Bundle savedInstanceState) {
-         return inflater.inflate(R.layout.panel_modes, container, false);
+        return inflater.inflate(R.layout.panel_modes, container, false);
     }
 
     @Override
@@ -87,33 +75,20 @@ public class PanelSettings extends PreferenceFragment implements RadioGroup.OnCh
         SharedPreferences sharedPrefs = PreferenceManager.getDefaultSharedPreferences(getContext());
         SharedPreferences.Editor edit = sharedPrefs.edit();
         if (checkedId == R.id.srgb_mode) {
-            Utils.writeValue(DCIModeSwitch.getFile(), "0");
-            edit.putBoolean(DeviceSettings.KEY_DCI_SWITCH, false);
-            Utils.writeValue(WideModeSwitch.getFile(), "0");
-            edit.putBoolean(DeviceSettings.KEY_WIDE_SWITCH, false);
             Utils.writeValue(SRGBModeSwitch.getFile(), "1");
             edit.putBoolean(DeviceSettings.KEY_SRGB_SWITCH, true);
+            Utils.writeValue(DCIModeSwitch.getFile(), "0");
+            edit.putBoolean(DeviceSettings.KEY_DCI_SWITCH, false);
         } else if (checkedId == R.id.dci_mode) {
-            Utils.writeValue(SRGBModeSwitch.getFile(), "0");
-            edit.putBoolean(DeviceSettings.KEY_SRGB_SWITCH, false);
-            Utils.writeValue(WideModeSwitch.getFile(), "0");
-            edit.putBoolean(DeviceSettings.KEY_WIDE_SWITCH, false);
             Utils.writeValue(DCIModeSwitch.getFile(), "1");
             edit.putBoolean(DeviceSettings.KEY_DCI_SWITCH, true);
-        } else if (checkedId == R.id.wide_mode) {
             Utils.writeValue(SRGBModeSwitch.getFile(), "0");
             edit.putBoolean(DeviceSettings.KEY_SRGB_SWITCH, false);
-            Utils.writeValue(DCIModeSwitch.getFile(), "0");
-            edit.putBoolean(DeviceSettings.KEY_DCI_SWITCH, false);
-            Utils.writeValue(WideModeSwitch.getFile(), "1");
-            edit.putBoolean(DeviceSettings.KEY_WIDE_SWITCH, true);
         } else if (checkedId == R.id.off_mode) {
-            Utils.writeValue(DCIModeSwitch.getFile(), "0");
-            edit.putBoolean(DeviceSettings.KEY_DCI_SWITCH, false);
-            Utils.writeValue(WideModeSwitch.getFile(), "0");
-            edit.putBoolean(DeviceSettings.KEY_WIDE_SWITCH, false);
             Utils.writeValue(SRGBModeSwitch.getFile(), "0");
             edit.putBoolean(DeviceSettings.KEY_SRGB_SWITCH, false);
+            Utils.writeValue(DCIModeSwitch.getFile(), "0");
+            edit.putBoolean(DeviceSettings.KEY_DCI_SWITCH, false);
         }
         edit.commit();
     }

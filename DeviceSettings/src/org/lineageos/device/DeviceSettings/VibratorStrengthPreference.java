@@ -28,6 +28,7 @@ import android.widget.Button;
 import android.os.Bundle;
 import android.util.Log;
 import android.os.Vibrator;
+import android.provider.Settings;
 import androidx.preference.Preference;
 import androidx.preference.PreferenceManager;
 import androidx.preference.PreferenceViewHolder;
@@ -41,16 +42,18 @@ public class VibratorStrengthPreference extends Preference implements
     private int mMaxValue;
     private Vibrator mVibrator;
 
-    private static final String FILE_LEVEL = "/sys/devices/platform/soc/c440000.qcom,spmi/spmi-0/spmi0-03/c440000.qcom,spmi:qcom,pmi8998@3:qcom,haptics@c000/leds/vibrator/vmax_mv_user";
-    private static final long testVibrationPattern[] = {0,250};
+    private static final String FILE_LEVEL = "/sys/devices/platform/soc/89c000.i2c/i2c-2/2-005a/leds/vibrator/level";
+    private static final long testVibrationPattern[] = {0,5};
+    public static final String SETTINGS_KEY = DeviceSettings.KEY_SETTINGS_PREFIX + DeviceSettings.KEY_VIBSTRENGTH;
+    public static final String DEFAULT = "3";
 
     public VibratorStrengthPreference(Context context, AttributeSet attrs) {
         super(context, attrs);
         // from drivers/platform/msm/qpnp-haptic.c
         // #define QPNP_HAP_VMAX_MIN_MV		116
         // #define QPNP_HAP_VMAX_MAX_MV		3596
-        mMinValue = 116;
-        mMaxValue = 2088;
+        mMinValue = 0;
+        mMaxValue = 5;
 
         mVibrator = (Vibrator) context.getSystemService(Context.VIBRATOR_SERVICE);
         setLayoutResource(R.layout.preference_seek_bar);
@@ -72,15 +75,14 @@ public class VibratorStrengthPreference extends Preference implements
     }
 
 	public static String getValue(Context context) {
-		return Utils.getFileValue(FILE_LEVEL, "2088");
+        String val = Utils.getFileValue(FILE_LEVEL, DEFAULT);
+        return val;
 	}
 
 	private void setValue(String newValue, boolean withFeedback) {
 	    Utils.writeValue(FILE_LEVEL, newValue);
-        SharedPreferences.Editor editor = PreferenceManager.getDefaultSharedPreferences(getContext()).edit();
-        editor.putString(DeviceSettings.KEY_VIBSTRENGTH, newValue);
-        editor.commit();
-	    if (withFeedback) {
+        Settings.System.putString(getContext().getContentResolver(), SETTINGS_KEY, newValue);
+        if (withFeedback) {
             mVibrator.vibrate(testVibrationPattern, -1);
         }
 	}
@@ -89,8 +91,11 @@ public class VibratorStrengthPreference extends Preference implements
         if (!isSupported()) {
             return;
         }
+        String storedValue = Settings.System.getString(context.getContentResolver(), SETTINGS_KEY);
+        if (storedValue == null) {
+            storedValue = DEFAULT;
+        }
 
-        String storedValue = PreferenceManager.getDefaultSharedPreferences(context).getString(DeviceSettings.KEY_VIBSTRENGTH, "2088");
         Utils.writeValue(FILE_LEVEL, storedValue);
     }
 
