@@ -45,8 +45,8 @@ import androidx.preference.PreferenceManager;
 import androidx.preference.PreferenceScreen;
 import androidx.preference.TwoStatePreference;
 
-import org.aosp.device.DeviceSettings.FileUtils;
-import org.aosp.device.DeviceSettings.Constants;
+import org.lineageos.device.DeviceSettings.FileUtils;
+import org.lineageos.device.DeviceSettings.Constants;
 
 public class DeviceSettings extends PreferenceFragment
         implements Preference.OnPreferenceChangeListener {
@@ -59,6 +59,7 @@ public class DeviceSettings extends PreferenceFragment
     public static final String KEY_DC_SWITCH = "dc";
     public static final String KEY_DCI_SWITCH = "dci";
     public static final String KEY_NIGHT_SWITCH = "night";
+    public static final String KEY_GESTURE_SINGLE_TAP_SWITCH = "gesture_single_tap";
     public static final String KEY_WIDECOLOR_SWITCH = "widecolor";
 
     private static final String KEY_CATEGORY_REFRESH = "refresh";
@@ -74,6 +75,7 @@ public class DeviceSettings extends PreferenceFragment
     private static TwoStatePreference mHBMModeSwitch;
     private static TwoStatePreference mHBMAutobrightnessSwitch;
     private static TwoStatePreference mDCModeSwitch;
+    private static TwoStatePreference mSingleTapSwitch;
     private static TwoStatePreference mRefreshRate;
     private static SwitchPreference mAutoRefreshRate;
     private static SwitchPreference mFpsInfo;
@@ -158,6 +160,25 @@ public class DeviceSettings extends PreferenceFragment
                 this.getContext().stopService(fpsinfo);
             }
         } else if (preference == mAutoHBMSwitch) {
+            Boolean enabled = (Boolean) newValue;
+            SharedPreferences.Editor prefChange = PreferenceManager.getDefaultSharedPreferences(getContext()).edit();
+            prefChange.putBoolean(KEY_HBM_AUTOBRIGHTNESS_SWITCH, enabled).commit();
+            Utils.enableService(getContext());
+            return true;
+        }
+        return false;
+    }
+     public boolean onPreferenceChange(Preference preference, Object newValue) {
+        if (preference == mTopKeyPref) {
+            Constants.setPreferenceInt(getContext(), preference.getKey(), Integer.parseInt((String) newValue));
+            return true;
+        } else if (preference == mMiddleKeyPref) {
+            Constants.setPreferenceInt(getContext(), preference.getKey(), Integer.parseInt((String) newValue));
+            return true;
+        } else if (preference == mBottomKeyPref) {
+            Constants.setPreferenceInt(getContext(), preference.getKey(), Integer.parseInt((String) newValue));
+            return true;
+        } else if (preference == mHBMAutobrightnessSwitch) {
             Boolean enabled = (Boolean) newValue;
             SharedPreferences.Editor prefChange = PreferenceManager.getDefaultSharedPreferences(getContext()).edit();
             prefChange.putBoolean(KEY_HBM_AUTOBRIGHTNESS_SWITCH, enabled).commit();

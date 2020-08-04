@@ -15,7 +15,7 @@
 * along with this program. If not, see <http://www.gnu.org/licenses/>.
 *
 */
-package org.aosp.device.DeviceSettings;
+package org.lineageos.device.DeviceSettings;
 
 import android.content.Context;
 import android.content.SharedPreferences;
@@ -24,7 +24,7 @@ import androidx.preference.Preference;
 import androidx.preference.Preference.OnPreferenceChangeListener;
 import androidx.preference.PreferenceManager;
 
-import org.aosp.device.DeviceSettings.DeviceSettings;
+import org.lineageos.device.DeviceSettings.DeviceSettings;
 
 public class RefreshRateSwitch implements OnPreferenceChangeListener {
 

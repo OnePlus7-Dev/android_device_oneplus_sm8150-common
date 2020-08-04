@@ -55,7 +55,7 @@ import androidx.preference.PreferenceScreen;
 import androidx.preference.TwoStatePreference;
 import androidx.viewpager.widget.ViewPager;
 
-import org.aosp.device.DeviceSettings.FileUtils;
+import org.lineageos.device.DeviceSettings.FileUtils;
 
 public class PanelSettings extends PreferenceFragment implements RadioGroup.OnCheckedChangeListener {
     private RadioGroup mRadioGroup;
