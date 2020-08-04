@@ -491,6 +491,16 @@
         <fqname>@1.0::IOnePlusCameraProvider/default</fqname>
     </hal>
     <hal format="hidl">
+        <name>vendor.oneplus.camera.CameraMDMHIDL</name>
+        <transport>hwbinder</transport>
+        <version>1.0</version>
+        <interface>
+            <name>IOnePlusCameraMDM</name>
+            <instance>default</instance>
+        </interface>
+        <fqname>@1.0::IOnePlusCameraMDM/default</fqname>
+    </hal>
+    <hal format="hidl">
         <name>vendor.oneplus.fingerprint.extension</name>
         <transport>hwbinder</transport>
         <version>1.0</version>
@@ -549,6 +559,16 @@
             <instance>default</instance>
         </interface>
         <fqname>@1.0::IOneplusRpmb/default</fqname>
+    </hal>
+    <hal format="hidl">
+        <name>vendor.oneplus.hardware.translation</name>
+        <transport>hwbinder</transport>
+        <version>1.0</version>
+        <interface>
+            <name>IOneplusTranslation</name>
+            <instance>default</instance>
+        </interface>
+        <fqname>@1.0::IOneplusTranslation/default</fqname>
     </hal>
     <hal format="hidl">
         <name>vendor.oneplus.hardware.wifi</name>
@@ -1015,23 +1035,7 @@
         <version>1.0</version>
         <interface>
             <name>IQtiExtendedFingerprint</name>
-            <instance>default</instance>
-        </interface>
-    </hal>
-    <hal format="hidl">
-        <name>vendor.lineage.livedisplay</name>
-        <transport>hwbinder</transport>
-        <version>2.0</version>
-        <interface>
-            <name>IDisplayModes</name>
-            <instance>default</instance>
-        </interface>
-        <interface>
-            <name>IPictureAdjustment</name>
-            <instance>default</instance>
-        </interface>
-        <interface>
-            <name>ISunlightEnhancement</name>
+
             <instance>default</instance>
         </interface>
     </hal>
