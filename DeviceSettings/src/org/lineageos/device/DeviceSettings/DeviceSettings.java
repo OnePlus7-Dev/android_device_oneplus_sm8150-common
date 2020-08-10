@@ -50,7 +50,6 @@ public class DeviceSettings extends PreferenceFragment
     public static final String KEY_HBM_SWITCH = "hbm";
     public static final String KEY_HBM_AUTOBRIGHTNESS_SWITCH = "hbm_autobrightness";
     public static final String KEY_HBM_AUTOBRIGHTNESS_THRESHOLD = "hbm_autobrightness_threshould";
-    public static final String KEY_DC_SWITCH = "dc";
     public static final String KEY_DCI_SWITCH = "dci";
     public static final String KEY_NIGHT_SWITCH = "night";
 
@@ -58,7 +57,6 @@ public class DeviceSettings extends PreferenceFragment
 
     private static TwoStatePreference mHBMModeSwitch;
     private static TwoStatePreference mHBMAutobrightnessSwitch;
-    private static TwoStatePreference mDCModeSwitch;
     private ListPreference mTopKeyPref;
     private ListPreference mMiddleKeyPref;
     private ListPreference mBottomKeyPref;
@@ -92,11 +90,6 @@ public class DeviceSettings extends PreferenceFragment
         mHBMAutobrightnessSwitch = (TwoStatePreference) findPreference(KEY_HBM_AUTOBRIGHTNESS_SWITCH);
         mHBMAutobrightnessSwitch.setChecked(PreferenceManager.getDefaultSharedPreferences(getContext()).getBoolean(DeviceSettings.KEY_HBM_AUTOBRIGHTNESS_SWITCH, false));
         mHBMAutobrightnessSwitch.setOnPreferenceChangeListener(this);
-
-        mDCModeSwitch = (TwoStatePreference) findPreference(KEY_DC_SWITCH);
-        mDCModeSwitch.setEnabled(DCModeSwitch.isSupported());
-        mDCModeSwitch.setChecked(DCModeSwitch.isCurrentlyEnabled(this.getContext()));
-        mDCModeSwitch.setOnPreferenceChangeListener(new DCModeSwitch());
     }
 
     @Override
