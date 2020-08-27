@@ -58,9 +58,6 @@ Return<bool> TouchscreenGesture::setGestureEnabled(
     }
 
     std::ofstream file(entry->second.path);
-    if (!f.is_open()) {
-       throw FileError("Failed to open file \"" + name + "\"");
-    }
     file << (enabled ? "1" : "0");
     LOG(DEBUG) << "Wrote file " << entry->second.path << " fail " << file.fail();
     return !file.fail();
