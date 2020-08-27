@@ -65,11 +65,16 @@ public class Utils {
             FileOutputStream fos = new FileOutputStream(new File(filename));
             fos.write(value.getBytes());
             fos.flush();
-            fos.close();
         } catch (FileNotFoundException e) {
-            e.printStackTrace();
+            log.error(e.getMessage(), e);
+        {
+        try
+            {
+            fos.close();
+            }
+        }
         } catch (IOException e) {
-            e.printStackTrace();
+            log.error(e.getMessage(), e);
         }
     }
 

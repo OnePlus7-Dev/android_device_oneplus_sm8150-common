@@ -55,7 +55,7 @@ public class VibratorStrengthPreference extends Preference implements
         mMinValue = 0;
         mMaxValue = 5;
 
-        mVibrator = (Vibrator) context.getSystemService(Context.VIBRATOR_SERVICE);
+        mVibrator = Vibrator.from(mContext) ;
         setLayoutResource(R.layout.preference_seek_bar);
     }
 
